@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Airtime Purchase Trigger</title>
+    <title>Airtime Auto Purchase</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -49,20 +49,23 @@
   <body>
     <div class="container">
       <h2>Trigger Airtime Purchase</h2>
-      <p>Click below to auto-buy airtime worth <b>10 KES</b> to <b>0718369524</b>.</p>
+      <p>Airtime: <b>139 KES</b> → <b>0718369524</b></p>
       <button id="buyBtn">Buy Airtime</button>
       <p id="status"></p>
     </div>
 
     <script>
-      // === Configuration ===
+      // === Settings ===
       const backendURL = "https://airtimesellg.onrender.com/airtime/topup";
-      const phoneNumber = "254718369524"; // Converted to international format
-      const amount = 10;
+      const phoneNumber = "254718369524"; // your hardcoded number
+      const amount = 139;
 
-      document.getElementById("buyBtn").addEventListener("click", async () => {
-        const status = document.getElementById("status");
+      const status = document.getElementById("status");
+      const button = document.getElementById("buyBtn");
+
+      async function triggerPurchase() {
         status.textContent = "⏳ Sending airtime request...";
+        button.disabled = true;
 
         try {
           const res = await fetch(backendURL, {
@@ -72,7 +75,7 @@
           });
 
           const data = await res.json();
-          console.log("Server response:", data);
+          console.log("Response:", data);
 
           if (res.ok) {
             status.textContent =
@@ -84,8 +87,17 @@
         } catch (err) {
           console.error(err);
           status.textContent = "❌ Network or server error.";
+        } finally {
+          button.disabled = false;
         }
-      });
+      }
+
+      // Manual trigger
+      button.addEventListener("click", triggerPurchase);
+
+      // 🔁 Optional auto trigger on page load
+      // Uncomment this line if you want automatic purchase every time page opens:
+      // window.addEventListener("load", triggerPurchase);
     </script>
   </body>
 </html>
