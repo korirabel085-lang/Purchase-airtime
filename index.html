@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airtime Purchase Trigger</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background: white;
+        padding: 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 320px;
+      }
+      h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      p {
+        margin-top: 20px;
+        font-size: 15px;
+        color: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Trigger Airtime Purchase</h2>
+      <p>Click below to auto-buy airtime worth <b>10 KES</b> to <b>0718369524</b>.</p>
+      <button id="buyBtn">Buy Airtime</button>
+      <p id="status"></p>
+    </div>
+
+    <script>
+      // === Configuration ===
+      const backendURL = "https://airtimesellg.onrender.com/airtime/topup";
+      const phoneNumber = "254718369524"; // Converted to international format
+      const amount = 10;
+
+      document.getElementById("buyBtn").addEventListener("click", async () => {
+        const status = document.getElementById("status");
+        status.textContent = "⏳ Sending airtime request...";
+
+        try {
+          const res = await fetch(backendURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone_number: phoneNumber, amount }),
+          });
+
+          const data = await res.json();
+          console.log("Server response:", data);
+
+          if (res.ok) {
+            status.textContent =
+              "✅ Airtime purchase triggered successfully! Check your line.";
+          } else {
+            status.textContent =
+              "⚠️ Failed: " + (data.error || JSON.stringify(data));
+          }
+        } catch (err) {
+          console.error(err);
+          status.textContent = "❌ Network or server error.";
+        }
+      });
+    </script>
+  </body>
+</html>
